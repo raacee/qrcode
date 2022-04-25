@@ -13,7 +13,7 @@ namespace QR_code_generator
         }
     }
 
-    internal class QRCode
+    public class QRCode
     {
         private byte version = 1;
         private bool[] mode = {false,false,true,false};
@@ -38,7 +38,8 @@ namespace QR_code_generator
             string res = "";
             foreach (var v in arr)
             {
-                res += Convert.ToChar(Convert.ToByte(v));
+                if (v) res += "1";
+                else res += "0";
             }
             return res;
         }
@@ -104,4 +105,6 @@ namespace QR_code_generator
     {
         private new string Message = "Module is colored, check pixels value";
     }
+    
+    
 }
