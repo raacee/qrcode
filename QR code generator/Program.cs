@@ -1,4 +1,5 @@
 ﻿using System;
+using Projet_Info;
 using System.Diagnostics;
 using System.Xml.Serialization;
 
@@ -8,6 +9,7 @@ namespace QR_code_generator
     {
         public static void Main()
         {
+            MyImage m = new MyImage("test.bmp");
             QRCode test = new QRCode("Hello World");
             test.Generate();
         }
@@ -45,21 +47,19 @@ namespace QR_code_generator
         }
     }
 
-    internal class Module
-    { 
-        public readonly bool value;
+    internal class Module : Pixel
+    {
+        private readonly bool value;
         public readonly bool skippable;
-        public readonly byte red;
-        public readonly byte green;
-        public readonly byte blue;
+
         public Module(bool p)
         {
             this.value = p;
             try
             {
-                this.red = Convert.ToByte(255-Convert.ToByte(p) * 255);
-                this.green = Convert.ToByte(255-Convert.ToByte(p) * 255);
-                this.blue = Convert.ToByte(255-Convert.ToByte(p) * 255);
+                this.Red = Convert.ToByte(255-Convert.ToByte(p) * 255);
+                this.Green = Convert.ToByte(255-Convert.ToByte(p) * 255);
+                this.Blue = Convert.ToByte(255-Convert.ToByte(p) * 255);
             }
             
             //should never happen
@@ -73,9 +73,9 @@ namespace QR_code_generator
             this.value = Convert.ToBoolean(p);
             try
             {
-                this.red = Convert.ToByte(255-Convert.ToByte(p) * 255);
-                this.green = Convert.ToByte(255-Convert.ToByte(p) * 255);
-                this.blue = Convert.ToByte(255-Convert.ToByte(p) * 255);
+                this.Red = Convert.ToByte(255-Convert.ToByte(p) * 255);
+                this.Green = Convert.ToByte(255-Convert.ToByte(p) * 255);
+                this.Blue = Convert.ToByte(255-Convert.ToByte(p) * 255);
             }
             
             //should never happen
@@ -89,9 +89,9 @@ namespace QR_code_generator
             this.value = Convert.ToBoolean(p);
             try
             {
-                this.red = Convert.ToByte(255-p * 255);
-                this.green = Convert.ToByte(255-p * 255);
-                this.blue = Convert.ToByte(255-p * 255);
+                this.Red = Convert.ToByte(255-p * 255);
+                this.Green = Convert.ToByte(255-p * 255);
+                this.Blue = Convert.ToByte(255-p * 255);
             }
             
             //should never happen
