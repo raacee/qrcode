@@ -86,6 +86,11 @@ namespace Projet_Info
 
         
         #endregion
+
+        public MyImage()
+        {
+            throw new ArgumentException("Using parameterless constructor ; MyImage class needs a parameter");
+        }
         public MyImage(string path)
         {
             this._path = path;
@@ -131,10 +136,10 @@ namespace Projet_Info
             //converting image to PIXEL array
             this._pixels = ToPixelArray(_imagebytes,_height,_width,_padding);
         }
-        public static byte[] ToByteArray(Pixel[,] pixelmat, int padding)
+        public static byte[] ToByteArray(Pixel[,] pixelmat)
         {
             List<byte> res = new List<byte>();
-
+            int padding = pixelmat.GetLength(1) % 4;
             Action work = delegate
             {
                 for (var index0 = 0; index0 < pixelmat.GetLength(0); index0++)
@@ -271,7 +276,7 @@ namespace Projet_Info
             }
 
             int newpadding = toWidth % 4;
-            byte[] imagebytes = ToByteArray(pixelRes,newpadding);
+            byte[] imagebytes = ToByteArray(pixelRes);
             
             byte[] header = HeaderBuilder(pixelRes);
             byte[] resarr = ByteArrAppend(header, imagebytes);
@@ -292,7 +297,7 @@ namespace Projet_Info
                 }
             }
             
-            byte[] bytearr = ToByteArray(pixelmat, this._padding);
+            byte[] bytearr = ToByteArray(pixelmat);
 
             byte[] allbytes = AddBaseHeader(bytearr);
             
@@ -312,7 +317,7 @@ namespace Projet_Info
                     resarr[i, j] = pixel;
                 }
             }
-            byte[] bytearr = ToByteArray(resarr, this._padding);
+            byte[] bytearr = ToByteArray(resarr);
             
             byte[] allbytes = AddBaseHeader(bytearr);
             
@@ -362,7 +367,7 @@ namespace Projet_Info
                 }
             }
 
-            byte[] bytearr = ToByteArray(rotate, rotate.GetLength(1)%4);
+            byte[] bytearr = ToByteArray(rotate);
             var newheader = HeaderBuilder(rotate);
             var allbytes = ByteArrAppend(newheader,bytearr);
 
@@ -395,7 +400,7 @@ namespace Projet_Info
 
                         }
                     }
-                    catch (Exception e)
+                    catch (Exception)
                     {
                         Console.WriteLine("Index out of range at " + i + " " + j);
                     }
@@ -453,7 +458,7 @@ namespace Projet_Info
                 }
             }
 
-            var bytearr = AddBaseHeader(ToByteArray(pixelRes,this._padding));
+            var bytearr = AddBaseHeader(ToByteArray(pixelRes));
 
             File.WriteAllBytes("out.bmp", bytearr);
             
@@ -490,7 +495,7 @@ namespace Projet_Info
 
                         }
                     }
-                    catch (Exception e)
+                    catch (Exception)
                     {
                         Console.WriteLine("Index out of range at " + i + " " + j);
                     }
@@ -557,7 +562,7 @@ namespace Projet_Info
                 }
             }
 
-            var bytearr = AddBaseHeader(ToByteArray(pixelRes,this._padding));
+            var bytearr = AddBaseHeader(ToByteArray(pixelRes));
 
             File.WriteAllBytes("out.bmp", bytearr);
             
@@ -594,7 +599,7 @@ namespace Projet_Info
 
                         }
                     }
-                    catch (Exception e)
+                    catch (Exception)
                     {
                         Console.WriteLine("Index out of range at " + i + " " + j);
                     }
@@ -661,7 +666,7 @@ namespace Projet_Info
                 }
             }
 
-            var bytearr = AddBaseHeader(ToByteArray(pixelRes,this._padding));
+            var bytearr = AddBaseHeader(ToByteArray(pixelRes));
 
             File.WriteAllBytes("out.bmp", bytearr);
             
@@ -716,7 +721,7 @@ namespace Projet_Info
                 }
             }
             
-            bytepixelsarr = ToByteArray(resPixels,this._padding);
+            bytepixelsarr = ToByteArray(resPixels);
             var bytefinalarr = AddBaseHeader(bytepixelsarr);
             File.WriteAllBytes("hidden.bmp", bytefinalarr);
 
@@ -744,8 +749,6 @@ namespace Projet_Info
             for (int i = 0; i < _width; i++)
             {
                 int redcounter = 0;
-                int greencounter = 0;
-                int bluecounter = 0;
                 
                 for (int j = 0; j < _height; j++)
                 {
@@ -760,14 +763,13 @@ namespace Projet_Info
                 }
             }
 
-            byte[] bytearr = ToByteArray(pixelres, this._padding);
+            byte[] bytearr = ToByteArray(pixelres);
             var newheaderbytes = HeaderBuilder(pixelres);
             var allbytes = ByteArrAppend(newheaderbytes, bytearr);
             
             File.WriteAllBytes("redhist_"+this.Path, allbytes);
             return new MyImage(this._path);
         }
-
         public static MyImage Fractal()
         {
             Pixel[,] pixelres = new Pixel[1080, 1920];
@@ -800,13 +802,11 @@ namespace Projet_Info
             }
 
             var newheader = HeaderBuilder(pixelres);
-            var pixelsarr = ToByteArray(pixelres, pixelres.GetLength(1) % 4);
+            var pixelsarr = ToByteArray(pixelres);
             var allbytesres = ByteArrAppend(newheader, pixelsarr);
             File.WriteAllBytes("Mandelbrot_Set.bmp",allbytesres);
             return new MyImage("Mandelbrot_Set.bmp");
         }
-
-
         public void ConsoleWriteAll()
         {
             foreach (var n in this._headerbytes)
@@ -819,7 +819,6 @@ namespace Projet_Info
             }
             
         }
-
         public static void FillBlack(Pixel[,] mat)
         {
             for (int i = 0; i < mat.GetLength(0); i++)

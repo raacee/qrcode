@@ -12,8 +12,16 @@ namespace Tests
         {
             bool[] test = {true, false, true, true};
             string res = "1011";
-            string obtained = QRCode.BoolArrayToBinString(test);
+            string obtained = QRCode.BoolArrToBinString(test);
             Assert.AreEqual(obtained, res);
+        }
+        [Test]
+        public void Test_BinStrToBoolArr()
+        {
+            bool[] test = {true, false, true, true};
+            string res = "1011";
+            var obtained = QRCode.BinStringToBoolArr(res);
+            Assert.AreEqual(obtained, test);
         }
     }
 }
