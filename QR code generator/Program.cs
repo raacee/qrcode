@@ -16,23 +16,22 @@ namespace QR_code_generator
     public class QRCode : MyImage
     {
         private byte version;
+        private string binstr;
         private string data;
         private bool[] mode = {false, false, true, false};
-        private char correction = 'L';
-        private bool[] length;
-        private bool[] binaries;
+        private char correction_mode = 'L';
+        private bool[] length_bits;
         private bool[] encoded_data;
+        private bool[] correctionbits;
+        private bool[] binaries;
         private bool[] allbytes;
         
-        public QRCode(string text, char corr = 'L')
+        public QRCode(string text, char corr_mode = 'L')
         {
-            string binstr = "";
+            binstr = "";
             this.data = text;
-            this.correction = corr;
+            this.correction_mode = corr_mode;
             binstr += BoolArrToBinString(this.mode) + Convert.ToString(text.Length, 2).PadLeft(9, '0');
-            this.length = BinStringToBoolArr(binstr);
-            this.encoded_data = Encode(data);
-            
         }
 
         //generate the image
@@ -41,7 +40,7 @@ namespace QR_code_generator
 
         }
 
-        public bool[] Encode(string data)
+        public static string Encode(string data)
         {
             string binstr = "";
             for (int i = 0; i < data.Length / 2; i += 2)
@@ -52,8 +51,7 @@ namespace QR_code_generator
                 int tot = a + b;
                 binstr += Convert.ToString(tot, 2).PadLeft(11, '0');
             }
-
-            return BinStringToBoolArr(binstr);
+            return binstr;
         }
 
         public static string BoolArrToBinString(bool[] arr)
@@ -77,7 +75,6 @@ namespace QR_code_generator
                 if (c == '1') res[index] = true;
                 else res[index] = false;
             }
-
             return res;
         }
     }
