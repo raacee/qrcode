@@ -37,7 +37,26 @@ namespace QR_code_generator
                 arr1[i] = arr2[i];
             }
         }
-        
-        
+
+        public static byte[] BinStrToBytes(string bits)
+        {
+            if (bits.Length % 8 != 0)
+            {
+                throw new ArgumentException("Bits string has a length that is not a multiple of 8");
+            }
+
+            byte[] res = new byte[bits.Length / 8];
+            
+            for (int i = 0; i < bits.Length; i += 8)
+            {
+                string bytestr = "";
+                for (int j = 0; j < 8; j++)
+                {
+                    bytestr += bits[i + j];
+                }
+                res[i / 8] = Convert.ToByte(bytestr, 2);
+            }
+            return res;
+        }
     }
 }

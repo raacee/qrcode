@@ -86,7 +86,6 @@ namespace Projet_Info
 
         
         #endregion
-
         public MyImage()
         {
             throw new ArgumentException("Using parameterless constructor ; MyImage class needs a parameter");
@@ -325,7 +324,6 @@ namespace Projet_Info
             
             return new MyImage(outputpath+"out.bmp");
         }
-        
         public MyImage Rotate(double angle) 
         {
             #region Renaming math functions
@@ -374,7 +372,6 @@ namespace Projet_Info
             File.WriteAllBytes("rotate_"+ this.Path, allbytes);
             return new MyImage("rotate_"+this.Path);
         }
-        //
         public MyImage Outlines()
         {
             int[,] convOutline = {{-1, -1, -1}, {-1, 8, -1}, {-1, -1, -1}};

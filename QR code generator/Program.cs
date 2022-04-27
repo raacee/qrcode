@@ -12,11 +12,11 @@ namespace QR_code_generator
     {
         public static void Main()
         {
-
+            QRCode hello_world = new QRCode("HELLO World");
         }
     }
 
-    public class QRCode : MyImage
+    public class QRCode
     {
         private byte _version;
         private string binstr;
@@ -31,17 +31,18 @@ namespace QR_code_generator
         
         public QRCode(string text, char corrMode = 'L', byte v = 1)
         {
+            text = text.ToUpper();
             this.data = text;
             this._version = v;
             binstr = ArrayOps.BoolArrToBinString(mode)+Convert.ToString(text.Length,2).PadLeft(9,'0');
             this.correction_mode = corrMode;
-            this.encoded_data = ArrayOps.BinStringToBoolArr(Encode(text));
+            this.encoded_data = ArrayOps.BinStringToBoolArr(Encode(text.ToUpper()));
             binstr += ArrayOps.BoolArrToBinString(this.encoded_data);
             
             //adding terminator and 0s
             for (int i = 0; i < 4; i++)
             {
-                if (binstr.Length < 19 * 4) binstr += "0";                
+                if (binstr.Length < 19 *8) binstr += "0";                
                 else break;
             }
             while (binstr.Length % 8 != 0)
@@ -50,7 +51,8 @@ namespace QR_code_generator
             }
             
             //adding pad bytes
-            for (int i = 0; i < 19*8-binstr.Length; i++)
+            int n = (19 * 8 - binstr.Length) / 8;
+            for (int i = 0; i < n; i++)
             {
                 if (i % 2 == 0)
                 {
@@ -61,9 +63,6 @@ namespace QR_code_generator
                     binstr += "00010001";
                 }
             }
-            
-            
-            
         }
         
         //generate the image
