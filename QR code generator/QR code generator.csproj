@@ -47,6 +47,12 @@
         <Compile Include="Program.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
     </ItemGroup>
+    <ItemGroup>
+      <ProjectReference Include="..\UtilisationReedSolomon\ReedSolomonAlg\ReedSolomonAlg.csproj">
+        <Project>{f771f2e7-e324-4349-9bfc-7ed19fae116e}</Project>
+        <Name>ReedSolomonAlg</Name>
+      </ProjectReference>
+    </ItemGroup>
     <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
     <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
          Other similar extension points exist, see Microsoft.Common.targets.
