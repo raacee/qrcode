@@ -26,7 +26,7 @@ namespace QR_code_generator
         private bool[] length_bits;
         private bool[] encoded_data;
         private bool[] correctionbits;
-        private bool[] binaries;
+        private bool[] data_binaries;
         private bool[] allbits;
         
         public QRCode(string text, char corrMode = 'L', byte v = 1)
@@ -63,6 +63,7 @@ namespace QR_code_generator
                     binstr += "00010001";
                 }
             }
+            data_binaries = ArrayOps.BinStringToBoolArr(binstr);
         }
         
         //generate the image

@@ -58,5 +58,16 @@ namespace QR_code_generator
             }
             return res;
         }
+        public static string BytesToBinStr(byte[] arr)
+        {
+            string res = "";
+            for (int i = 0; i < arr.Length; i++)
+            {
+                res += Convert.ToString(arr[i], 2).PadLeft(8, '0');
+            }
+            return res;
+        }
+        
+        
     }
 }
