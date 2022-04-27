@@ -1,6 +1,8 @@
 ﻿using System;
 using Projet_Info;
+using System.IO;
 using System.Diagnostics;
+using System.Net;
 using System.Xml.Serialization;
 
 namespace QR_code_generator
@@ -28,10 +30,16 @@ namespace QR_code_generator
         
         public QRCode(string text, char corr_mode = 'L')
         {
-            binstr = "";
+            binstr = BoolArrToBinString(mode)+Convert.ToString(text.Length,2).PadLeft(9,'0');
             this.data = text;
             this.correction_mode = corr_mode;
-            binstr += BoolArrToBinString(this.mode) + Convert.ToString(text.Length, 2).PadLeft(9, '0');
+            this.encoded_data = BinStringToBoolArr(Encode(text));
+            binstr += BoolArrToBinString(this.encoded_data);
+            while (binstr.Length % 8 != 0)
+            {
+                binstr += '0';
+            }
+            
         }
 
         //generate the image
@@ -42,15 +50,54 @@ namespace QR_code_generator
 
         public static string Encode(string data)
         {
-            string binstr = "";
-            for (int i = 0; i < data.Length / 2; i += 2)
+            var alpha = File.ReadAllLines(@"C:\Users\racel\RiderProjects\qrcode\QR code generator\bin\Debug\alpha_table.txt");
+            string[][] table = new string[alpha.Length][];
+            
+            for (int i = 0; i < alpha.Length; i++)
             {
-                int a = data[i];
-                int b = data[i + 1];
-                a *= 45;
-                int tot = a + b;
-                binstr += Convert.ToString(tot, 2).PadLeft(11, '0');
+                string number = i.ToString();
+                var arr = new string[2] {Convert.ToString(alpha[i][0]),i.ToString()};
+                table[i] = arr;
             }
+            
+            string binstr = "";
+            for (int i = 0; i < data.Length/2*2; i += 2)
+            {
+                string a = Convert.ToString(data[i]);
+                string b = Convert.ToString(data[i + 1]);
+                int c1 = 0, c2 = 0;
+                
+                for (int j = 0; j < table.GetLength(0); j++)
+                {
+                    if (a == table[j][0])
+                    {
+                        c1 = Convert.ToInt32(table[j][1]);
+                    }
+                    if (b == table[j][0])
+                    {
+                        c2 = Convert.ToInt32(table[j][1]);
+                    }
+                }
+                int tot = 45*c1 + c2;
+                string addbin = Convert.ToString(tot, 2).PadLeft(11, '0');
+                binstr += addbin;
+            }
+            
+            if (data.Length % 2 == 1)
+            {
+                var c = Convert.ToString(data[data.Length - 1]);
+                int res = 0;
+                for (int j = 0; j < table.GetLength(0); j++)
+                {
+                    if (c == table[j][0])
+                    {
+                        res = Convert.ToInt32(table[j][1]);
+                        break;
+                    }
+                }
+                binstr += Convert.ToString(res,2).PadLeft(6,'0');
+            }
+            
             return binstr;
         }
 
