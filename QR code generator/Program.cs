@@ -1,6 +1,7 @@
 ﻿using System;
 using Projet_Info;
 using System.IO;
+using ReedSolomon;
 using System.Diagnostics;
 using System.Net;
 using System.Xml.Serialization;
@@ -62,8 +63,9 @@ namespace QR_code_generator
             }
             
             
+            
         }
-
+        
         //generate the image
         public void Generate()
         {

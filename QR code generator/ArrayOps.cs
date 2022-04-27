@@ -37,5 +37,7 @@ namespace QR_code_generator
                 arr1[i] = arr2[i];
             }
         }
+        
+        
     }
 }
