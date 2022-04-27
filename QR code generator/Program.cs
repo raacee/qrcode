@@ -12,7 +12,7 @@ namespace QR_code_generator
     {
         public static void Main()
         {
-            var a = new bool[10];
+
         }
     }
 
