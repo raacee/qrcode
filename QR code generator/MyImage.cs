@@ -241,9 +241,9 @@ namespace Projet_Info
             }
             return res;
         }
-        public static byte[] ByteArrAppend(byte[] arr1, byte[] arr2)
+        public static T[] ArrAppend<T>(T[] arr1, T[] arr2)
         {
-            byte[] res = new byte[arr1.Length + arr2.Length];
+            T[] res = new T[arr1.Length + arr2.Length];
             for (int i = 0; i < arr1.Length; i++)
             {
                 res[i] = arr1[i];
@@ -279,7 +279,7 @@ namespace Projet_Info
             byte[] imagebytes = ToByteArray(pixelRes);
             
             byte[] header = HeaderBuilder(pixelRes);
-            byte[] resarr = ByteArrAppend(header, imagebytes);
+            byte[] resarr = ArrAppend(header, imagebytes);
             File.WriteAllBytes("out_resized.bmp",resarr);
             return new MyImage("out_resized.bmp");
         }
@@ -369,7 +369,7 @@ namespace Projet_Info
 
             byte[] bytearr = ToByteArray(rotate);
             var newheader = HeaderBuilder(rotate);
-            var allbytes = ByteArrAppend(newheader,bytearr);
+            var allbytes = ArrAppend(newheader,bytearr);
 
             File.WriteAllBytes("rotate_"+ this.Path, allbytes);
             return new MyImage("rotate_"+this.Path);
@@ -765,7 +765,7 @@ namespace Projet_Info
 
             byte[] bytearr = ToByteArray(pixelres);
             var newheaderbytes = HeaderBuilder(pixelres);
-            var allbytes = ByteArrAppend(newheaderbytes, bytearr);
+            var allbytes = ArrAppend(newheaderbytes, bytearr);
             
             File.WriteAllBytes("redhist_"+this.Path, allbytes);
             return new MyImage(this._path);
@@ -803,7 +803,7 @@ namespace Projet_Info
 
             var newheader = HeaderBuilder(pixelres);
             var pixelsarr = ToByteArray(pixelres);
-            var allbytesres = ByteArrAppend(newheader, pixelsarr);
+            var allbytesres = ArrAppend(newheader, pixelsarr);
             File.WriteAllBytes("Mandelbrot_Set.bmp",allbytesres);
             return new MyImage("Mandelbrot_Set.bmp");
         }

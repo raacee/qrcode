@@ -11,34 +11,56 @@ namespace QR_code_generator
     {
         public static void Main()
         {
-            
+            var a = new bool[10];
         }
     }
 
     public class QRCode : MyImage
     {
-        private byte version;
+        private byte _version;
         private string binstr;
         private string data;
         private bool[] mode = {false, false, true, false};
-        private char correction_mode = 'L';
+        private char correction_mode;
         private bool[] length_bits;
         private bool[] encoded_data;
         private bool[] correctionbits;
         private bool[] binaries;
-        private bool[] allbytes;
+        private bool[] allbits;
         
-        public QRCode(string text, char corr_mode = 'L')
+        public QRCode(string text, char corrMode = 'L', byte v = 1)
         {
-            binstr = BoolArrToBinString(mode)+Convert.ToString(text.Length,2).PadLeft(9,'0');
             this.data = text;
-            this.correction_mode = corr_mode;
-            this.encoded_data = BinStringToBoolArr(Encode(text));
-            binstr += BoolArrToBinString(this.encoded_data);
+            this._version = v;
+            binstr = ArrayOps.BoolArrToBinString(mode)+Convert.ToString(text.Length,2).PadLeft(9,'0');
+            this.correction_mode = corrMode;
+            this.encoded_data = ArrayOps.BinStringToBoolArr(Encode(text));
+            binstr += ArrayOps.BoolArrToBinString(this.encoded_data);
+            
+            //adding terminator and 0s
+            for (int i = 0; i < 4; i++)
+            {
+                if (binstr.Length < 19 * 4) binstr += "0";                
+                else break;
+            }
             while (binstr.Length % 8 != 0)
             {
-                binstr += '0';
+                binstr += "0";
             }
+            
+            //adding pad bytes
+            for (int i = 0; i < 19*8-binstr.Length; i++)
+            {
+                if (i % 2 == 0)
+                {
+                    binstr += "11101100";
+                }
+                else
+                {
+                    binstr += "00010001";
+                }
+            }
+            
             
         }
 
@@ -101,27 +123,14 @@ namespace QR_code_generator
             return binstr;
         }
 
-        public static string BoolArrToBinString(bool[] arr)
+        public static string ErrorCorrection(string data)
         {
             string res = "";
-            foreach (var v in arr)
-            {
-                if (v) res += "1";
-                else res += "0";
-            }
-
-            return res;
-        }
-
-        public static bool[] BinStringToBoolArr(string s)
-        {
-            bool[] res = new bool[s.Length];
-            for (var index = 0; index < s.Length; index++)
-            {
-                var c = s[index];
-                if (c == '1') res[index] = true;
-                else res[index] = false;
-            }
+            
+            
+            
+            
+            
             return res;
         }
     }
