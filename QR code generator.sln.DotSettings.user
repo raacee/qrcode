@@ -6,49 +6,15 @@
   &lt;Assembly Path="C:\Windows\Microsoft.NET\Framework64\v4.0.30319\System.Runtime.dll" /&gt;&#xD;
   &lt;Assembly Path="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\Facades\System.Runtime.dll" /&gt;&#xD;
 &lt;/AssemblyExplorer&gt;</s:String>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=0631d563_002D0c34_002D43f1_002D91d7_002D6880e28c0c6b/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="Test_Encode #3" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=86f60204_002Dfb18_002D48e5_002Db120_002D475cdac48483/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="Tests" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
   &lt;TestAncestor&gt;&#xD;
     &lt;TestId&gt;NUnit3x::EF0AF299-ED6A-4174-8CB8-222443C44C19::.NETFramework,Version=v4.8::Tests.Tests&lt;/TestId&gt;&#xD;
   &lt;/TestAncestor&gt;&#xD;
 &lt;/SessionState&gt;</s:String>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=1a6f2abe_002D6112_002D4404_002D8c39_002Dfabf210a28b2/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="Test_Encode" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
-  &lt;TestAncestor&gt;&#xD;
-    &lt;TestId&gt;NUnit3x::EF0AF299-ED6A-4174-8CB8-222443C44C19::.NETFramework,Version=v4.8::Tests.Tests.Test_Encode&lt;/TestId&gt;&#xD;
-  &lt;/TestAncestor&gt;&#xD;
-&lt;/SessionState&gt;</s:String>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=1c3dd753_002De871_002D4a5a_002Db4fd_002D7540ca4a9f3c/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="Test_BoolArrtoBin" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
-  &lt;TestAncestor&gt;&#xD;
-    &lt;TestId&gt;NUnit3x::EF0AF299-ED6A-4174-8CB8-222443C44C19::.NETFramework,Version=v4.8::Tests.Tests.Test_BoolArrtoBin&lt;/TestId&gt;&#xD;
-    &lt;TestId&gt;NUnit3x::EF0AF299-ED6A-4174-8CB8-222443C44C19::.NETFramework,Version=v4.8::Tests.Tests.Test_BinStrToBoolArr&lt;/TestId&gt;&#xD;
-    &lt;TestId&gt;NUnit3x::EF0AF299-ED6A-4174-8CB8-222443C44C19::.NETFramework,Version=v4.8::Tests.Tests.Encode&lt;/TestId&gt;&#xD;
-  &lt;/TestAncestor&gt;&#xD;
-&lt;/SessionState&gt;</s:String>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=48c4ec7c_002Ddb73_002D4b48_002D88b6_002D76f1cf13e4eb/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="Test_BoolArrtoBin #2" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
-  &lt;TestAncestor&gt;&#xD;
-    &lt;TestId&gt;NUnit3x::EF0AF299-ED6A-4174-8CB8-222443C44C19::.NETFramework,Version=v4.8::Tests.Tests.Test_BoolArrtoBin&lt;/TestId&gt;&#xD;
-    &lt;TestId&gt;NUnit3x::EF0AF299-ED6A-4174-8CB8-222443C44C19::.NETFramework,Version=v4.8::Tests.Tests.Test_BinStrToBoolArr&lt;/TestId&gt;&#xD;
-    &lt;TestId&gt;NUnit3x::EF0AF299-ED6A-4174-8CB8-222443C44C19::.NETFramework,Version=v4.8::Tests.Tests.Encode&lt;/TestId&gt;&#xD;
-  &lt;/TestAncestor&gt;&#xD;
-&lt;/SessionState&gt;</s:String>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=7b38160c_002D0d2b_002D46e7_002Da6f8_002D0dff8c7e1786/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="Test_BoolArrtoBin #4" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
-  &lt;TestAncestor&gt;&#xD;
-    &lt;TestId&gt;NUnit3x::EF0AF299-ED6A-4174-8CB8-222443C44C19::.NETFramework,Version=v4.8::Tests.Tests.Test_BoolArrtoBin&lt;/TestId&gt;&#xD;
-    &lt;TestId&gt;NUnit3x::EF0AF299-ED6A-4174-8CB8-222443C44C19::.NETFramework,Version=v4.8::Tests.Tests.Test_BinStrToBoolArr&lt;/TestId&gt;&#xD;
-    &lt;TestId&gt;NUnit3x::EF0AF299-ED6A-4174-8CB8-222443C44C19::.NETFramework,Version=v4.8::Tests.Tests.Encode&lt;/TestId&gt;&#xD;
-    &lt;TestId&gt;NUnit3x::EF0AF299-ED6A-4174-8CB8-222443C44C19::.NETFramework,Version=v4.8::Tests.Tests.Test_Encode&lt;/TestId&gt;&#xD;
-  &lt;/TestAncestor&gt;&#xD;
-&lt;/SessionState&gt;</s:String>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=bb0f2863_002D3faf_002D4987_002D93b2_002D6d7739eb4686/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="Test_Encode #2" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
-  &lt;TestAncestor&gt;&#xD;
-    &lt;TestId&gt;NUnit3x::EF0AF299-ED6A-4174-8CB8-222443C44C19::.NETFramework,Version=v4.8::Tests.Tests.Test_Encode&lt;/TestId&gt;&#xD;
-  &lt;/TestAncestor&gt;&#xD;
-&lt;/SessionState&gt;</s:String>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=cc51f61f_002D44e4_002D40eb_002D8887_002D3b5c0fadf5d5/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="Test_BoolArrtoBin #3" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
-  &lt;TestAncestor&gt;&#xD;
-    &lt;TestId&gt;NUnit3x::EF0AF299-ED6A-4174-8CB8-222443C44C19::.NETFramework,Version=v4.8::Tests.Tests.Test_BoolArrtoBin&lt;/TestId&gt;&#xD;
-    &lt;TestId&gt;NUnit3x::EF0AF299-ED6A-4174-8CB8-222443C44C19::.NETFramework,Version=v4.8::Tests.Tests.Test_BinStrToBoolArr&lt;/TestId&gt;&#xD;
-    &lt;TestId&gt;NUnit3x::EF0AF299-ED6A-4174-8CB8-222443C44C19::.NETFramework,Version=v4.8::Tests.Tests.Encode&lt;/TestId&gt;&#xD;
-    &lt;TestId&gt;NUnit3x::EF0AF299-ED6A-4174-8CB8-222443C44C19::.NETFramework,Version=v4.8::Tests.Tests.Test_Encode&lt;/TestId&gt;&#xD;
-    &lt;TestId&gt;NUnit3x::EF0AF299-ED6A-4174-8CB8-222443C44C19::.NETFramework,Version=v4.8::Tests.Tests.Test_BinStrToBytes&lt;/TestId&gt;&#xD;
-  &lt;/TestAncestor&gt;&#xD;
-&lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>
+	
+	
+	
+	
+	
+	
+	</wpf:ResourceDictionary>

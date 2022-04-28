@@ -15,7 +15,6 @@ namespace QR_code_generator
 
             return res;
         }
-        
         public static bool[] BinStringToBoolArr(string s)
         {
             bool[] res = new bool[s.Length];
@@ -27,17 +26,30 @@ namespace QR_code_generator
             }
             return res;
         }
-        
-        public static void Fuse<T>(T[] arr1,T[] arr2)
+        public static void Fuse<T>(T[] arr1,T[] arr2,int index = 0)
         {
-            if (arr2.Length > arr1.Length) throw new ArgumentException("Second argument is bigger than first");
-
-            for (int i = 0; i < arr1.Length; i++)
+            try
             {
-                arr1[i] = arr2[i];
+                for (int i = index; i < arr2.Length + index; i++)
+                {
+                    arr1[i] = arr2[i];
+                }
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                return;
             }
         }
-
+        public static void Insert<T>(T[,] mat1, T[,] mat2, int[] coord)
+        {
+            for (int i = 0; i < mat2.GetLength(0); i++)
+            {
+                for (int j = 0; j < mat2.GetLength(1); j++)
+                {
+                    mat1[i + coord[0], j + coord[1]] = mat2[i, j];
+                }
+            }
+        }
         public static byte[] BinStrToBytes(string bits)
         {
             if (bits.Length % 8 != 0)
@@ -67,7 +79,8 @@ namespace QR_code_generator
             }
             return res;
         }
-        
-        
+        public static bool[] BytesToBoolArr(byte[] arr) => BinStringToBoolArr(BytesToBinStr(arr));
+        public static byte[] BoolArrToBytes(bool[] arr) => BinStrToBytes(BoolArrToBinString(arr));
+
     }
 }

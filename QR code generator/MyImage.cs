@@ -139,28 +139,24 @@ namespace Projet_Info
         {
             List<byte> res = new List<byte>();
             int padding = pixelmat.GetLength(1) % 4;
-            Action work = delegate
+            
+            for (var index0 = 0; index0 < pixelmat.GetLength(0); index0++)
+            for (var index1 = 0; index1 < pixelmat.GetLength(1); index1++)
             {
-                for (var index0 = 0; index0 < pixelmat.GetLength(0); index0++)
-                for (var index1 = 0; index1 < pixelmat.GetLength(1); index1++)
-                {
-                    var pixel = pixelmat[index0, index1];
-                    
-                        res.Add(pixel.Blue);
-                        res.Add(pixel.Green);
-                        res.Add(pixel.Red);
-                   
+                var pixel = pixelmat[index0, index1];
+                
+                    res.Add(pixel.Blue);
+                    res.Add(pixel.Green);
+                    res.Add(pixel.Red);
 
                     if (index1 == pixelmat.GetLength(1) - 1)
+                {
+                    for (int i = 0; i < padding; i++)
                     {
-                        for (int i = 0; i < padding; i++)
-                        {
-                            res.Add(0);
-                        }
+                        res.Add(0);
                     }
                 }
-            };
-            work();
+            }
             return res.ToArray();
         }
         public static Pixel[,] ToPixelArray(byte[] arr,int height, int width, int padding)

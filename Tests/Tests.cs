@@ -43,6 +43,13 @@ namespace Tests
             CollectionAssert.AreEqual(exp,ArrayOps.BinStrToBytes(a));
         }
         
+        [Test]
+        public void Test_BytesToBinStr()
+        {
+            var exp = "01001111110011010010111001101001";
+            var a = new byte[] {79, 205, 46, 105};
+            CollectionAssert.AreEqual(exp,ArrayOps.BytesToBinStr(a));
+        }
         
         
         [Test]
