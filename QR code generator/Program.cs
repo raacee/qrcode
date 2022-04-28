@@ -139,11 +139,37 @@ namespace QR_code_generator
             for (int i = 0; i < length-16; i++)
             {
                 this.matrix[8+i, 5] = new Module(Convert.ToBoolean(1-i % 2), true, true);
-                this.matrix[length-1-5,8+i] = new Module(Convert.ToBoolean(1-i % 2), true, true);
+                this.matrix[length-6,8+i] = new Module(Convert.ToBoolean(1-i % 2), true, true);
             }
             
             //add dark module
-            this.matrix[7, 8] = new Module(false, true, true);
+            this.matrix[7, 8] = new Module(true, true, true);
+            
+            //add format information area
+            for (int i = 0; i < 9; i++)
+            {
+                if (!this.matrix[length - 1 - 8, i].reserved)
+                {
+                    this.matrix[length - 1 - 8, i] = new Module(false, true, true);
+                }
+                if (!this.matrix[i, length - 1 - 8].reserved)
+                {
+                    this.matrix[i, length - 1 - 8] = new Module(false, true, true);
+                }
+                if (!this.matrix[i, 8].reserved && i <= 6)
+                {
+                    this.matrix[i, 8] = new Module(false, true, true);
+                }
+                if (!this.matrix[length-1-8, length-1-i].reserved && i <= 6)
+                {
+                    this.matrix[length-1-8, length-1-i] = new Module(false, true, true);
+                }
+            }
+            
+            WriteBits(this.binstr);
+            Mask();
+
+
 
         }
         
@@ -155,7 +181,8 @@ namespace QR_code_generator
             var allbytes = MyImage.ArrAppend(header, imagebytes);
             File.WriteAllBytes("QRCode.bmp",allbytes);
         }
-
+        
+        //encode a string of characters into a string of bits according to QR codes specifications
         public static string Encode(string data)
         {
             var alpha = File.ReadAllLines(@"C:\Users\racel\RiderProjects\qrcode\QR code generator\bin\Debug\alpha_table.txt");
@@ -208,18 +235,32 @@ namespace QR_code_generator
             
             return binstr;
         }
-
         private static byte[] ErrorCorrection(string bindata)
         {
             byte[] arr = ArrayOps.BinStrToBytes(bindata);
             var corrbytes = ReedSolomonAlgorithm.Encode(arr,7,ErrorCorrectionCodeType.QRCode);
             return corrbytes;
         }
+        private void WriteBits(string bits)
+        {
+            for (int i = 0; i < this.matrix.GetLength(0); i++)
+            {
+                for (int j = 0; j < this.matrix.GetLength(1); j++)
+                {
+                    
+                }
+            }
+        }
+        private void Mask()
+        {
+            
+        }
+        
     }
 
     internal class Module : Pixel
     {
-        public readonly bool value;
+        public bool value;
         public readonly bool skip;
         public readonly bool reserved;
 
