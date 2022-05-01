@@ -12,8 +12,8 @@ namespace QR_code_generator
     {
         public static void Main()
         {
-            QRCode hello_world = new QRCode("HellO WorLD");
-            hello_world.Generate();
+            QRCode hello_world = new QRCode("HellO WORlD",'L',1);
+            hello_world.GenerateBMPImage();
         }
     }
 
@@ -30,6 +30,7 @@ namespace QR_code_generator
         private bool[] data_binaries;
         private bool[] allbits;
         private Module[,] matrix;
+        private int binlength;
 
         public QRCode(string text, char corrMode = 'L', byte v = 1)
         {
@@ -40,6 +41,7 @@ namespace QR_code_generator
             this.correction_mode = corrMode;
             this.encoded_data = ArrayOps.BinStringToBoolArr(Encode(text.ToUpper()));
             binstr += ArrayOps.BoolArrToBinString(this.encoded_data);
+            this.binlength = corrMode == 'L' ? 19 * 8 : 34 * 8;
             
             //adding terminator and 0s
             for (int i = 0; i < 4; i++)
@@ -69,10 +71,10 @@ namespace QR_code_generator
             this.correctionbits = ArrayOps.BytesToBoolArr(ErrorCorrection(binstr));
             binstr += ArrayOps.BoolArrToBinString(this.correctionbits);
             allbits = ArrayOps.BinStringToBoolArr(binstr);
-            BuildTemplate('L');
+            BuildModuleMatrix('L');
+            //WriteBitsOnModuleMatrix();
         }
-
-        private void BuildTemplate(char error_corr = 'L')
+        private void BuildModuleMatrix(char error_corr = 'L')
         {
             //set all modules to false
             this.matrix = new Module[21+4*(version-1),21+4*(version-1)];
@@ -96,11 +98,11 @@ namespace QR_code_generator
                     if (i == 0 || j == 0 || i == 6 || j == 6 ||
                         (i <= 4 && i >= 2 && j <= 4 && j >= 2))
                     {
-                        finderpattern[i, j] = new Module(true,true,true);
+                        finderpattern[i, j] = new Module(true,true,true,false);
                     }
                     else
                     {
-                        finderpattern[i, j] = new Module(false,true,true);
+                        finderpattern[i, j] = new Module(false,true,true,false);
                     }
                 }
             }
@@ -116,9 +118,9 @@ namespace QR_code_generator
                 {
                     for (int j = 0; j < 5; j++)
                     {
-                        if (i == 0 || j == 0 || i == 4 || j == 4) alignmentpatt[i, j] = new Module(true, true, true);
-                        else if (i == 2 && j == 2) alignmentpatt[i, j] = new Module(true, true, true);
-                        else alignmentpatt[i, j] = new Module(false, true, true);
+                        if (i == 0 || j == 0 || i == 4 || j == 4) alignmentpatt[i, j] = new Module(true, true, true,false);
+                        else if (i == 2 && j == 2) alignmentpatt[i, j] = new Module(true, true, true,false);
+                        else alignmentpatt[i, j] = new Module(false, true, true,false);
                     }
                 }
                 ArrayOps.Insert(this.matrix,alignmentpatt,new int[] {4,length-8});
@@ -127,54 +129,63 @@ namespace QR_code_generator
             //add separators
             for (int i = 0; i < 8; i++)
             {
-                this.matrix[i, 7] = new Module(false, true, true);
-                this.matrix[7, i] = new Module(false, true, true);
-                this.matrix[length-7-1,i] = new Module(false, true, true);
-                this.matrix[length-i-1,7] = new Module(false, true, true);
-                this.matrix[length-i-1,length-7-1] = new Module(false, true, true);
-                this.matrix[length-1-7,length-i-1] = new Module(false, true, true);
+                this.matrix[i, 7] = new Module(false, true, true,false);
+                this.matrix[7, i] = new Module(false, true, true,false);
+                this.matrix[length-7-1,i] = new Module(false, true, true,false);
+                this.matrix[length-i-1,7] = new Module(false, true, true,false);
+                this.matrix[length-i-1,length-7-1] = new Module(false, true, true,false);
+                this.matrix[length-1-7,length-i-1] = new Module(false, true, true,false);
             }
 
             //add timing patterns
             for (int i = 0; i < length-16; i++)
             {
-                this.matrix[8+i, 5] = new Module(Convert.ToBoolean(1-i % 2), true, true);
-                this.matrix[length-6,8+i] = new Module(Convert.ToBoolean(1-i % 2), true, true);
+                this.matrix[8+i, 5] = new Module(Convert.ToBoolean(1-i % 2), true, true,false);
+                this.matrix[length-6,8+i] = new Module(Convert.ToBoolean(1-i % 2), true, true,false);
             }
             
             //add dark module
-            this.matrix[7, 8] = new Module(true, true, true);
+            this.matrix[7, 8] = new Module(true, true, true,false);
+            
+            WriteBitsOnModuleMatrix();
+            Mask();
             
             //add format information area
-            for (int i = 0; i < 9; i++)
+            //fill format information area
+            string FIAbinstr = "111011111000100";
+            int k1 = 0, k2 = 0, k3 = 0, k4 = 0;
+            for (int i = 0; i < 9;i++)
             {
                 if (!this.matrix[length - 1 - 8, i].reserved)
                 {
-                    this.matrix[length - 1 - 8, i] = new Module(false, true, true);
+                    this.matrix[length - 1 - 8, i] = new Module(Convert.ToBoolean(FIAbinstr[i-k1]-48), true, true,false);
                 }
-                if (!this.matrix[i, length - 1 - 8].reserved)
+                else
                 {
-                    this.matrix[i, length - 1 - 8] = new Module(false, true, true);
+                    k1++;
+                }
+                if (!this.matrix[length-1-i, 8].reserved)
+                {
+                    this.matrix[length-1-i, 8] = new Module(Convert.ToBoolean(FIAbinstr[14-i+k2]-48), true, true,false);
+                }
+                else
+                {
+                    k2++;
                 }
                 if (!this.matrix[i, 8].reserved && i <= 6)
                 {
-                    this.matrix[i, 8] = new Module(false, true, true);
+                    this.matrix[i, 8] = new Module(Convert.ToBoolean(FIAbinstr[i-k3]-48), true, true,false);
                 }
                 if (!this.matrix[length-1-8, length-1-i].reserved && i <= 6)
                 {
-                    this.matrix[length-1-8, length-1-i] = new Module(false, true, true);
+                    this.matrix[length-1-8, length-1-i] = new Module(Convert.ToBoolean(FIAbinstr[14-i]-48), true, true,false);
                 }
             }
             
-            WriteBits(this.binstr);
-            Mask();
-
-
-
         }
         
         //generate the image
-        public void Generate()
+        public void GenerateBMPImage()
         {
             var imagebytes = MyImage.ToByteArray(this.matrix);
             var header = MyImage.HeaderBuilder(this.matrix);
@@ -185,7 +196,7 @@ namespace QR_code_generator
         //encode a string of characters into a string of bits according to QR codes specifications
         public static string Encode(string data)
         {
-            var alpha = File.ReadAllLines(@"C:\Users\racel\RiderProjects\qrcode\QR code generator\bin\Debug\alpha_table.txt");
+            var alpha = File.ReadAllLines(@"C:\Users\User\RiderProjects\QR code generator\QR code generator\bin\Debug\alpha_table.txt");
             string[][] table = new string[alpha.Length][];
             
             for (int i = 0; i < alpha.Length; i++)
@@ -241,19 +252,48 @@ namespace QR_code_generator
             var corrbytes = ReedSolomonAlgorithm.Encode(arr,7,ErrorCorrectionCodeType.QRCode);
             return corrbytes;
         }
-        private void WriteBits(string bits)
+        private void Mask()
         {
             for (int i = 0; i < this.matrix.GetLength(0); i++)
             {
                 for (int j = 0; j < this.matrix.GetLength(1); j++)
                 {
-                    
+                    if ((i + j) % 2 == 0 && this.matrix[i,j].mask)
+                    {
+                        this.matrix[i, j].value = !this.matrix[i, j].value;
+                    }
                 }
             }
-        }
-        private void Mask()
-        {
             
+        }
+        private void WriteBitsOnModuleMatrix()
+        {
+            int k = 0;
+            int sign = 1;
+            int i = 0;
+            
+            for (int j = this.matrix.GetLength(1)-1; j>=0; j-=2)
+            {
+                if (k >= this.binlength)
+                    throw new Exception("Binary string longer than QR Code capacity");
+                
+                while(i < this.matrix.GetLength(0) && i>=0)
+                {
+                    if (!this.matrix[i, j].skip)
+                    {
+                        this.matrix[i, j] = new Module(Convert.ToBoolean(this.binstr[k]-48));
+                        k++;
+                    }
+                    if (!this.matrix[i, j - 1].skip)
+                    {
+                        this.matrix[i, j - 1] = new Module(Convert.ToBoolean(this.binstr[k]-48));
+                        k++;
+                    }
+                    i += sign;
+                }
+                sign *= -1;
+            }
+
         }
         
     }
@@ -263,57 +303,28 @@ namespace QR_code_generator
         public bool value;
         public readonly bool skip;
         public readonly bool reserved;
+        public readonly bool mask;
 
-        public Module(bool p, bool skip = false, bool res = false)
+        public Module(bool p, bool skip = false, bool reserved = false, bool mask = true)
         {
             this.value = p;
-            this.reserved = res;
-            try
-            {
-                this.Red = Convert.ToByte(255 - Convert.ToByte(p) * 255);
-                this.Green = Convert.ToByte(255 - Convert.ToByte(p) * 255);
-                this.Blue = Convert.ToByte(255 - Convert.ToByte(p) * 255);
-                this.skip = skip;
-            }
-
-            //should never happen
-            catch (OverflowException)
-            {
-                Console.WriteLine("Pixel color byte conversion resulted in a number over 255");
-            }
+            this.reserved = reserved;
+            this.mask = mask;
+            this.skip = skip;
+        
+            this.Red = Convert.ToByte(255 - Convert.ToByte(p) * 255);
+            this.Green = Convert.ToByte(255 - Convert.ToByte(p) * 255);
+            this.Blue = Convert.ToByte(255 - Convert.ToByte(p) * 255);            
         }
-
-        /*public Module(int p)
-        {
-            this.value = Convert.ToBoolean(p);
-            try
-            {
-                this.Red = Convert.ToByte(255 - Convert.ToByte(p) * 255);
-                this.Green = Convert.ToByte(255 - Convert.ToByte(p) * 255);
-                this.Blue = Convert.ToByte(255 - Convert.ToByte(p) * 255);
-            }
-
-            //should never happen
-            catch (OverflowException)
-            {
-                Console.WriteLine("Pixel color byte conversion resulted in a number over 255");
-            }
-        }*/
         public Module(byte p)
         {
             this.value = Convert.ToBoolean(p);
-            try
-            {
-                this.Red = Convert.ToByte(255 - p * 255);
-                this.Green = Convert.ToByte(255 - p * 255);
-                this.Blue = Convert.ToByte(255 - p * 255);
-            }
-
-            //should never happen
-            catch (OverflowException)
-            {
-                Console.WriteLine("Pixel color byte conversion resulted in a number over 255");
-            }
+            this.skip = false;
+            this.reserved = false;
+            this.mask = true;
+            this.Red = Convert.ToByte(255 - p * 255);
+            this.Green = Convert.ToByte(255 - p * 255);
+            this.Blue = Convert.ToByte(255 - p * 255);
         }
     }
 }

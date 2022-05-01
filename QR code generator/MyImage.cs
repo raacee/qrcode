@@ -86,10 +86,7 @@ namespace Projet_Info
 
         
         #endregion
-        public MyImage()
-        {
-            throw new ArgumentException("Using parameterless constructor ; MyImage class needs a parameter");
-        }
+        
         public MyImage(string path)
         {
             this._path = path;

@@ -50,8 +50,7 @@ namespace Tests
             var a = new byte[] {79, 205, 46, 105};
             CollectionAssert.AreEqual(exp,ArrayOps.BytesToBinStr(a));
         }
-        
-        
+
         [Test]
         public void Test_ErrorCorrection()
         {
