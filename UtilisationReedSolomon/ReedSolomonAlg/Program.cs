@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+
 using System.Collections;
 
 namespace ReedSolomon
@@ -12,7 +12,7 @@ namespace ReedSolomon
         static void Main(string[] args)
         {
             Encoding u8 = Encoding.UTF8;
-            string a = "HELLO WORD";
+            string a = "HELLO WORLD";
             int iBC = u8.GetByteCount(a);
             byte[] bytesa = u8.GetBytes(a);
             string b = "HELLO WORF";
@@ -21,7 +21,7 @@ namespace ReedSolomon
             //Privilégiez l'écriture suivante car par défaut le type choisi est DataMatrix 
             byte[] result = ReedSolomonAlgorithm.Encode(bytesa, 7, ErrorCorrectionCodeType.QRCode);
             byte[] result1 = ReedSolomonAlgorithm.Decode(bytesb, result);
-            foreach (byte val in a) Console.Write(val + " ");
+            foreach (byte val in result) Console.Write(val + " ");
             Console.WriteLine();
          
             Console.ReadLine();

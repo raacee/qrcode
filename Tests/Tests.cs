@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Net;
 using System.IO;
 using NUnit.Framework;
 using QR_code_generator;
+using ReedSolomon;
+using System.Text;
 
 namespace Tests
 {
@@ -38,23 +41,19 @@ namespace Tests
         [Test]
         public void Test_BinStrToBytes()
         {
-            var a = "01001111110011010010111001101001";
-            var exp = new byte[] {79, 205, 46, 105};
+            var a = "0010011111001101001011100110100110010001";
+            var exp = new byte[] {39,205,46,105,145};
             CollectionAssert.AreEqual(exp,ArrayOps.BinStrToBytes(a));
-        }
-        
-        [Test]
-        public void Test_BytesToBinStr()
-        {
-            var exp = "01001111110011010010111001101001";
-            var a = new byte[] {79, 205, 46, 105};
-            CollectionAssert.AreEqual(exp,ArrayOps.BytesToBinStr(a));
         }
 
         [Test]
         public void Test_ErrorCorrection()
         {
+            var act = ReedSolomonAlgorithm.Encode(new byte[]
+                {67, 85, 70, 134, 87, 38, 85, 194, 119, 50, 6, 18, 6, 103, 38},18,ErrorCorrectionCodeType.QRCode);
+            var exp = new byte[] {213 ,199 ,11 ,45 ,115 ,247 ,241 ,223 ,229 ,248 ,154 ,117 ,154,111 ,86 ,161 ,111 ,39};
             
+            CollectionAssert.AreEqual(exp,act);
         }
     }
 }

@@ -56,7 +56,6 @@ namespace QR_code_generator
             {
                 throw new ArgumentException("Bits string has a length that is not a multiple of 8");
             }
-
             byte[] res = new byte[bits.Length / 8];
             
             for (int i = 0; i < bits.Length; i += 8)

@@ -91,8 +91,8 @@ namespace ReedSolomon
 
             int dataBytes = toEncode.Length - ecBytes;
 
-            if (dataBytes <= 0)
-                throw new ArgumentException("No data bytes provided");
+            /*if (dataBytes <= 0)
+                throw new ArgumentException("No data bytes provided");*/
 
             GenericGFPoly generator = BuildGenerator(ecBytes);
             int[] infoCoefficients = toEncode.Select(x => (int)x).ToArray();

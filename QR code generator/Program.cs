@@ -2,8 +2,10 @@
 using Projet_Info;
 using System.IO;
 using ReedSolomon;
+using System.Text;
 using System.Diagnostics;
 using System.Net;
+using System.Text.RegularExpressions;
 using System.Xml.Serialization;
 
 namespace QR_code_generator
@@ -12,13 +14,16 @@ namespace QR_code_generator
     {
         public static void Main()
         {
-            QRCode hello_world = new QRCode("HellO WORlD",'L',1);
+            QRCode hello_world = new QRCode("HellO WORlD");
             hello_world.GenerateBMPImage();
+            MyImage qr = new MyImage("QRCode.bmp");
+            qr.Resize(420, 420);
         }
     }
 
     public class QRCode
     {
+        #region Fields
         private byte version;
         private string binstr;
         private string data;
@@ -31,7 +36,7 @@ namespace QR_code_generator
         private bool[] allbits;
         private Module[,] matrix;
         private int binlength;
-
+        #endregion
         public QRCode(string text, char corrMode = 'L', byte v = 1)
         {
             text = text.ToUpper();
@@ -67,14 +72,20 @@ namespace QR_code_generator
                     binstr += "00010001";
                 }
             }
+            
             data_binaries = ArrayOps.BinStringToBoolArr(binstr);
+            
             this.correctionbits = ArrayOps.BytesToBoolArr(ErrorCorrection(binstr));
             binstr += ArrayOps.BoolArrToBinString(this.correctionbits);
+            
             allbits = ArrayOps.BinStringToBoolArr(binstr);
-            BuildModuleMatrix('L');
-            //WriteBitsOnModuleMatrix();
+            BuildModuleMatrix();
         }
-        private void BuildModuleMatrix(char error_corr = 'L')
+        
+        /// <summary>
+        /// Builds the whole Module Matrix
+        /// </summary>
+        private void BuildModuleMatrix()
         {
             //set all modules to false
             this.matrix = new Module[21+4*(version-1),21+4*(version-1)];
@@ -90,7 +101,6 @@ namespace QR_code_generator
 
             //adding the finder patterns
             Module[,] finderpattern = new Module[7, 7];
-            
             for (int i = 0; i < 7; i++)
             {
                 for (int j = 0; j < 7; j++)
@@ -147,44 +157,14 @@ namespace QR_code_generator
             //add dark module
             this.matrix[7, 8] = new Module(true, true, true,false);
             
+            FillFIA();
             WriteBitsOnModuleMatrix();
             Mask();
-            
-            //add format information area
-            //fill format information area
-            string FIAbinstr = "111011111000100";
-            int k1 = 0, k2 = 0, k3 = 0, k4 = 0;
-            for (int i = 0; i < 9;i++)
-            {
-                if (!this.matrix[length - 1 - 8, i].reserved)
-                {
-                    this.matrix[length - 1 - 8, i] = new Module(Convert.ToBoolean(FIAbinstr[i-k1]-48), true, true,false);
-                }
-                else
-                {
-                    k1++;
-                }
-                if (!this.matrix[length-1-i, 8].reserved)
-                {
-                    this.matrix[length-1-i, 8] = new Module(Convert.ToBoolean(FIAbinstr[14-i+k2]-48), true, true,false);
-                }
-                else
-                {
-                    k2++;
-                }
-                if (!this.matrix[i, 8].reserved && i <= 6)
-                {
-                    this.matrix[i, 8] = new Module(Convert.ToBoolean(FIAbinstr[i-k3]-48), true, true,false);
-                }
-                if (!this.matrix[length-1-8, length-1-i].reserved && i <= 6)
-                {
-                    this.matrix[length-1-8, length-1-i] = new Module(Convert.ToBoolean(FIAbinstr[14-i]-48), true, true,false);
-                }
-            }
-            
         }
         
-        //generate the image
+        /// <summary>
+        /// Writes the QR Code in a bmp image file
+        /// </summary>
         public void GenerateBMPImage()
         {
             var imagebytes = MyImage.ToByteArray(this.matrix);
@@ -193,10 +173,14 @@ namespace QR_code_generator
             File.WriteAllBytes("QRCode.bmp",allbytes);
         }
         
-        //encode a string of characters into a string of bits according to QR codes specifications
+        /// <summary>
+        /// Encode a string of characters into a string of bits according to QR codes specifications
+        /// </summary>
+        /// <param name="data">Text to encode</param>
+        /// <returns>A binary string representing the text in input</returns>
         public static string Encode(string data)
         {
-            var alpha = File.ReadAllLines(@"C:\Users\User\RiderProjects\QR code generator\QR code generator\bin\Debug\alpha_table.txt");
+            var alpha = File.ReadAllLines(@"C:\Users\racel\RiderProjects\qrcode\QR code generator\bin\Debug\alpha_table.txt");
             string[][] table = new string[alpha.Length][];
             
             for (int i = 0; i < alpha.Length; i++)
@@ -246,12 +230,22 @@ namespace QR_code_generator
             
             return binstr;
         }
-        private static byte[] ErrorCorrection(string bindata)
+        
+        /// <summary>
+        /// Generates the correction bytes for the binary string in input
+        /// </summary>
+        /// <param name="bindata"></param>
+        /// <returns>A byte array of correction bytes via Reed-Solomon Algorithm of a binary string</returns>
+        public static byte[] ErrorCorrection(string bindata)
         {
             byte[] arr = ArrayOps.BinStrToBytes(bindata);
             var corrbytes = ReedSolomonAlgorithm.Encode(arr,7,ErrorCorrectionCodeType.QRCode);
             return corrbytes;
         }
+        
+        /// <summary>
+        /// Applies a mask on a module matrix
+        /// </summary>
         private void Mask()
         {
             for (int i = 0; i < this.matrix.GetLength(0); i++)
@@ -264,47 +258,89 @@ namespace QR_code_generator
                     }
                 }
             }
-            
         }
+        /// <summary>
+        /// Reserve and fill the FIA modules
+        /// </summary>
+        private void FillFIA()
+        {
+            string FIAbinstr = "111011111000100";
+            int length = (this.version-1)*4 + 21; 
+            int k1 = 0, k2 = 0, k3 = 0, k4 = 0;
+            for (int i = 0; i < 9;i++)
+            {
+                if (!this.matrix[length - 1 - 8, i].reserved)
+                {
+                    this.matrix[length - 1 - 8, i] = new Module(Convert.ToBoolean(FIAbinstr[i-k1]-48), true, true,false);
+                }
+                else
+                {
+                    k1++;
+                }
+                if (!this.matrix[length-1-i, 8].reserved)
+                {
+                    this.matrix[length-1-i, 8] = new Module(Convert.ToBoolean(FIAbinstr[14-i+k2]-48), true, true,false);
+                }
+                else
+                {
+                    k2++;
+                }
+                if (!this.matrix[i, 8].reserved && i <= 6)
+                {
+                    this.matrix[i, 8] = new Module(Convert.ToBoolean(FIAbinstr[i-k3]-48), true, true,false);
+                }
+                if (!this.matrix[length-1-8, length-2-i].reserved && i <= 6)
+                {
+                    this.matrix[length-1-8, length-2-i] = new Module(Convert.ToBoolean(FIAbinstr[14-i]-48), true, true,false);
+                }
+            }
+        }
+        
+        /// <summary>
+        /// Writes the modules in the matrix
+        /// </summary>
+        /// <exception cref="Exception"></exception>
         private void WriteBitsOnModuleMatrix()
         {
             int k = 0;
             int sign = 1;
             int i = 0;
-            
-            for (int j = this.matrix.GetLength(1)-1; j>=0; j-=2)
-            {
-                if (k >= this.binlength)
-                    throw new Exception("Binary string longer than QR Code capacity");
-                
-                while(i < this.matrix.GetLength(0) && i>=0)
-                {
-                    if (!this.matrix[i, j].skip)
-                    {
-                        this.matrix[i, j] = new Module(Convert.ToBoolean(this.binstr[k]-48));
-                        k++;
-                    }
-                    if (!this.matrix[i, j - 1].skip)
-                    {
-                        this.matrix[i, j - 1] = new Module(Convert.ToBoolean(this.binstr[k]-48));
-                        k++;
-                    }
-                    i += sign;
-                }
-                sign *= -1;
-            }
+            int j = this.matrix.GetLength(1) - 1;
 
+            while (i < this.matrix.GetLength(0) && i >= 0 && j >= 1)
+            {
+                if (!this.matrix[i, j].skip)
+                {
+                    this.matrix[i, j] = new Module(Convert.ToBoolean(this.binstr[k] - 48));
+                    k++;
+                }
+
+                if (!this.matrix[i, j - 1].skip)
+                {
+                    this.matrix[i, j - 1] = new Module(Convert.ToBoolean(this.binstr[k] - 48));
+                    k++;
+                }
+
+                i += sign;
+                if (i == this.matrix.GetLength(0) || i == -1)
+                {
+                    sign *= -1;
+                    i += sign;
+                    j -= 2;
+                }
+            }
         }
-        
     }
 
-    internal class Module : Pixel
+    /// <summary>
+    /// Module class. Adds boolean fields to Pixel class from MyImage.cs
+    /// </summary>
+    public class Module : Pixel
     {
         public bool value;
         public readonly bool skip;
         public readonly bool reserved;
         public readonly bool mask;
-
         public Module(bool p, bool skip = false, bool reserved = false, bool mask = true)
         {
             this.value = p;

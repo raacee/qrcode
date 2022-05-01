@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Net;
 
 namespace Projet_Info
 {
@@ -86,7 +87,11 @@ namespace Projet_Info
 
         
         #endregion
-        
+
+        public MyImage()
+        {
+            throw new Exception("WRONG CONSTRUCTOR");
+        }
         public MyImage(string path)
         {
             this._path = path;
