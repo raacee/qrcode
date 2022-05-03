@@ -5,6 +5,7 @@ using ReedSolomon;
 using System.Text;
 using System.Diagnostics;
 using System.Net;
+using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 using System.Xml.Serialization;
 
@@ -14,7 +15,7 @@ namespace QR_code_generator
     {
         public static void Main()
         {
-            QRCode hello_world = new QRCode("HellO WORlD");
+            QRCode hello_world = new QRCode("HellO WORlD",'L',1);
             hello_world.GenerateBMPImage();
             MyImage qr = new MyImage("QRCode.bmp");
             qr.Resize(420, 420);
@@ -43,22 +44,25 @@ namespace QR_code_generator
             this.data = text;
             this.version = v;
             binstr = ArrayOps.BoolArrToBinString(mode)+Convert.ToString(text.Length,2).PadLeft(9,'0');
+
             this.correction_mode = corrMode;
-            this.encoded_data = ArrayOps.BinStringToBoolArr(Encode(text.ToUpper()));
+            this.encoded_data = ArrayOps.BinStringToBoolArr(Encode());
             binstr += ArrayOps.BoolArrToBinString(this.encoded_data);
+
             this.binlength = corrMode == 'L' ? 19 * 8 : 34 * 8;
-            
+
             //adding terminator and 0s
             for (int i = 0; i < 4; i++)
             {
                 if (binstr.Length < 19 *8) binstr += "0";                
                 else break;
             }
+            
             while (binstr.Length % 8 != 0)
             {
                 binstr += "0";
             }
-            
+
             //adding pad bytes
             int n = (19 * 8 - binstr.Length) / 8;
             for (int i = 0; i < n; i++)
@@ -74,10 +78,11 @@ namespace QR_code_generator
             }
             
             data_binaries = ArrayOps.BinStringToBoolArr(binstr);
+            this.correctionbits = ArrayOps.BytesToBoolArr(ErrorCorrection());
             
-            this.correctionbits = ArrayOps.BytesToBoolArr(ErrorCorrection(binstr));
+            
             binstr += ArrayOps.BoolArrToBinString(this.correctionbits);
-            
+
             allbits = ArrayOps.BinStringToBoolArr(binstr);
             BuildModuleMatrix();
         }
@@ -87,6 +92,7 @@ namespace QR_code_generator
         /// </summary>
         private void BuildModuleMatrix()
         {
+            
             //set all modules to false
             this.matrix = new Module[21+4*(version-1),21+4*(version-1)];
             int length = 21 + 4 * (version-1);
@@ -178,7 +184,7 @@ namespace QR_code_generator
         /// </summary>
         /// <param name="data">Text to encode</param>
         /// <returns>A binary string representing the text in input</returns>
-        public static string Encode(string data)
+        public string Encode()
         {
             var alpha = File.ReadAllLines(@"C:\Users\racel\RiderProjects\qrcode\QR code generator\bin\Debug\alpha_table.txt");
             string[][] table = new string[alpha.Length][];
@@ -191,10 +197,10 @@ namespace QR_code_generator
             }
             
             string binstr = "";
-            for (int i = 0; i < data.Length/2*2; i += 2)
+            for (int i = 0; i < this.data.Length/2*2; i += 2)
             {
-                string a = Convert.ToString(data[i]);
-                string b = Convert.ToString(data[i + 1]);
+                string a = Convert.ToString(this.data[i]);
+                string b = Convert.ToString(this.data[i + 1]);
                 int c1 = 0, c2 = 0;
                 
                 for (int j = 0; j < table.GetLength(0); j++)
@@ -213,9 +219,62 @@ namespace QR_code_generator
                 binstr += addbin;
             }
             
-            if (data.Length % 2 == 1)
+            if (this.data.Length % 2 == 1)
             {
-                var c = Convert.ToString(data[data.Length - 1]);
+                var c = Convert.ToString(this.data[this.data.Length - 1]);
+                int res = 0;
+                for (int j = 0; j < table.GetLength(0); j++)
+                {
+                    if (c == table[j][0])
+                    {
+                        res = Convert.ToInt32(table[j][1]);
+                        break;
+                    }
+                }
+                binstr += Convert.ToString(res,2).PadLeft(6,'0');
+            }
+            
+            return binstr;
+        }
+
+        public static string Encode(string text)
+        {
+            var alpha = File.ReadAllLines(@"C:\Users\racel\RiderProjects\qrcode\QR code generator\bin\Debug\alpha_table.txt");
+            string[][] table = new string[alpha.Length][];
+            
+            for (int i = 0; i < alpha.Length; i++)
+            {
+                string number = i.ToString();
+                var arr = new string[2] {Convert.ToString(alpha[i][0]),i.ToString()};
+                table[i] = arr;
+            }
+            
+            string binstr = "";
+            for (int i = 0; i < text.Length/2*2; i += 2)
+            {
+                string a = Convert.ToString(text[i]);
+                string b = Convert.ToString(text[i + 1]);
+                int c1 = 0, c2 = 0;
+                
+                for (int j = 0; j < table.GetLength(0); j++)
+                {
+                    if (a == table[j][0])
+                    {
+                        c1 = Convert.ToInt32(table[j][1]);
+                    }
+                    if (b == table[j][0])
+                    {
+                        c2 = Convert.ToInt32(table[j][1]);
+                    }
+                }
+                int tot = 45*c1 + c2;
+                string addbin = Convert.ToString(tot, 2).PadLeft(11, '0');
+                binstr += addbin;
+            }
+            
+            if (text.Length % 2 == 1)
+            {
+                var c = Convert.ToString(text[text.Length - 1]);
                 int res = 0;
                 for (int j = 0; j < table.GetLength(0); j++)
                 {
@@ -236,10 +295,11 @@ namespace QR_code_generator
         /// </summary>
         /// <param name="bindata"></param>
         /// <returns>A byte array of correction bytes via Reed-Solomon Algorithm of a binary string</returns>
-        public static byte[] ErrorCorrection(string bindata)
+        private byte[] ErrorCorrection()
         {
-            byte[] arr = ArrayOps.BinStrToBytes(bindata);
-            var corrbytes = ReedSolomonAlgorithm.Encode(arr,7,ErrorCorrectionCodeType.QRCode);
+            byte[] arr = ArrayOps.BinStrToBytes(this.binstr);
+            int count = this.version == 1 ? 7 : 10;
+            var corrbytes = ReedSolomonAlgorithm.Encode(arr,count,ErrorCorrectionCodeType.QRCode);
             return corrbytes;
         }
         
@@ -252,21 +312,23 @@ namespace QR_code_generator
             {
                 for (int j = 0; j < this.matrix.GetLength(1); j++)
                 {
-                    if ((i + j) % 2 == 0 && this.matrix[i,j].mask)
+                    if ((i + j) % 2 == 0 && this.matrix[i, j].mask)
                     {
                         this.matrix[i, j].value = !this.matrix[i, j].value;
                     }
                 }
             }
         }
+        
         /// <summary>
         /// Reserve and fill the FIA modules
         /// </summary>
         private void FillFIA()
         {
             string FIAbinstr = "111011111000100";
-            int length = (this.version-1)*4 + 21; 
-            int k1 = 0, k2 = 0, k3 = 0, k4 = 0;
+            int length = (this.version-1)*4 + 21;
+            int k1 = 0, k2 = 0, k3 = 0;
+            
             for (int i = 0; i < 9;i++)
             {
                 if (!this.matrix[length - 1 - 8, i].reserved)
@@ -291,7 +353,7 @@ namespace QR_code_generator
                 }
                 if (!this.matrix[length-1-8, length-2-i].reserved && i <= 6)
                 {
-                    this.matrix[length-1-8, length-2-i] = new Module(Convert.ToBoolean(FIAbinstr[14-i]-48), true, true,false);
+                    this.matrix[length-1-8, length-2-i] = new Module(Convert.ToBoolean(FIAbinstr[14-i-1]-48), true, true,false);
                 }
             }
         }
@@ -309,19 +371,25 @@ namespace QR_code_generator
 
             while (i < this.matrix.GetLength(0) && i >= 0 && j >= 1)
             {
+                if (j == 6)
+                {
+                    j--;
+                    continue;
+                }
                 if (!this.matrix[i, j].skip)
                 {
-                    this.matrix[i, j] = new Module(Convert.ToBoolean(this.binstr[k] - 48));
+                    this.matrix[i, j] = new Module(Convert.ToBoolean(this.binstr[k] - 48),false,true,true);
                     k++;
                 }
 
                 if (!this.matrix[i, j - 1].skip)
                 {
-                    this.matrix[i, j - 1] = new Module(Convert.ToBoolean(this.binstr[k] - 48));
+                    this.matrix[i, j - 1] = new Module(Convert.ToBoolean(this.binstr[k] - 48),false,true,true);
                     k++;
                 }
-
+                
                 i += sign;
+                
                 if (i == this.matrix.GetLength(0) || i == -1)
                 {
                     sign *= -1;

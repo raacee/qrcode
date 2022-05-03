@@ -44,12 +44,12 @@
     &lt;TestId&gt;NUnit3x::EF0AF299-ED6A-4174-8CB8-222443C44C19::.NETFramework,Version=v4.8::Tests.Tests&lt;/TestId&gt;&#xD;
   &lt;/TestAncestor&gt;&#xD;
 &lt;/SessionState&gt;</s:String>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=bb0f2863_002D3faf_002D4987_002D93b2_002D6d7739eb4686/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="Test_Encode #2" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=bb0f2863_002D3faf_002D4987_002D93b2_002D6d7739eb4686/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="Test_Encode #2" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
   &lt;TestAncestor&gt;&#xD;
     &lt;TestId&gt;NUnit3x::EF0AF299-ED6A-4174-8CB8-222443C44C19::.NETFramework,Version=v4.8::Tests.Tests&lt;/TestId&gt;&#xD;
   &lt;/TestAncestor&gt;&#xD;
 &lt;/SessionState&gt;</s:String>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=cc51f61f_002D44e4_002D40eb_002D8887_002D3b5c0fadf5d5/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="Test_BoolArrtoBin #3" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=cc51f61f_002D44e4_002D40eb_002D8887_002D3b5c0fadf5d5/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="Test_BoolArrtoBin #3" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
   &lt;Solution /&gt;&#xD;
 &lt;/SessionState&gt;</s:String>
 	

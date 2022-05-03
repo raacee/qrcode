@@ -51,9 +51,21 @@ namespace Tests
         {
             var act = ReedSolomonAlgorithm.Encode(new byte[]
                 {67, 85, 70, 134, 87, 38, 85, 194, 119, 50, 6, 18, 6, 103, 38},18,ErrorCorrectionCodeType.QRCode);
+            
             var exp = new byte[] {213 ,199 ,11 ,45 ,115 ,247 ,241 ,223 ,229 ,248 ,154 ,117 ,154,111 ,86 ,161 ,111 ,39};
             
             CollectionAssert.AreEqual(exp,act);
         }
+        
+        [Test]
+        public void Test_ByteArrToBinStr()
+        {
+            var act = ArrayOps.BytesToBinStr(new byte[] {67, 85, 70, 134});
+
+            var exp = "01000011010101010100011010000110";
+            
+            CollectionAssert.AreEqual(exp,act);
+        }
+        
     }
 }
